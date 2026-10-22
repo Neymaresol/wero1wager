@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pathlib import Path
+from provider_registry import provider_status
 
 app = FastAPI(title="Wero1Wager PARADIGMA", version="0.3.1-rc")
 app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")
@@ -16,6 +17,10 @@ def sports():
 @app.get("/api/events")
 def events():
     return {"items":EVENTS,"source":"synthetic_demo","betting_enabled":False}
+@app.get("/api/providers/status")
+def providers_status():
+    return provider_status()
+
 @app.get("/api/finance/summary")
 def finance():
     return {"confirmed_revenue_brl":"0.00","simulated_revenue_brl":"0.00","transfers_enabled":False,"verified_provider":False}
