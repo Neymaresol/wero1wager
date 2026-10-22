@@ -38,3 +38,12 @@ def test_financial_gate():
 
 def test_unknown_route():
     assert client.get("/api/bet").status_code == 404
+
+
+def test_provider_status_never_claims_live_connection():
+    data = client.get("/api/providers/status").json()
+    assert data["real_money_betting"] is False
+    assert len(data["providers"]) == 4
+    assert all(p["connected"] is False for p in data["providers"])
+    assert all(p["latency_ms"] is None for p in data["providers"])
+    assert all(p["referrals_enabled"] is False for p in data["providers"])
