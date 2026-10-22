@@ -1,8 +1,10 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 
 app = FastAPI(title="Wero1Wager PARADIGMA", version="0.3.1-rc")
+app.mount("/static", StaticFiles(directory=Path(__file__).parent / "static"), name="static")
 SPORTS = ["Futebol","Basquete","Tênis","Vôlei","Futebol americano","Beisebol","Hóquei","Automobilismo","MMA","Boxe","eSports","Rúgbi","Handebol","Críquete","Ciclismo","Golfe","Tênis de mesa","Badminton","Natação","Atletismo","Esportes de inverno","Surfe","Skate","Xadrez"]
 EVENTS = [{"sport":"Futebol","name":"Aurora × Eclipse"},{"sport":"Basquete","name":"Titãs × Cometas"},{"sport":"Tênis","name":"Jogador A × Jogador B"},{"sport":"eSports","name":"Nexus × Vortex"}]
 @app.get("/health")
