@@ -71,3 +71,12 @@ def test_no_unverified_live_market_claims():
     data = response.json()
     assert all(not p["connected"] for p in data["providers"])
     assert all(p["data_freshness"] == "unavailable" for p in data["providers"])
+
+
+def test_premium_assets_gate():
+    """A Vegas Digital release requires every approved visual asset."""
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    required = ["logo.webp", "werozinha.webp", "sports.webp", "casino.webp", "virtual.webp", "esports.webp", "ai.webp", "bonus.webp", "referencia-original.webp"]
+    missing = [name for name in required if not (root / "static" / "assets" / name).is_file()]
+    assert not missing, f"Premium Vegas Digital release blocked: missing assets: {missing}"
