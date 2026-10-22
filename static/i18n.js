@@ -9,9 +9,9 @@ es:{
 };
 const dictionary={};for(const [lang,entries] of Object.entries(translations))for(const [pt,translated] of Object.entries(entries)){dictionary[pt]??={};dictionary[pt][lang]=translated}
 const storageKey='wero1wager.language';let chosen='pt-BR';try{chosen=localStorage.getItem(storageKey)||''}catch(e){}if(!translations[chosen]&&chosen!=='pt-BR'){const browser=(navigator.language||'pt-BR').toLowerCase();chosen=browser.startsWith('es')?'es':browser.startsWith('en')?'en':'pt-BR'}
-const select=document.getElementById('language');select.value=chosen;
+const select=document.getElementById('language');if(!select)return;select.value=chosen;
 const original=new WeakMap();let busy=false;
 function translate(){if(busy)return;busy=true;try{document.documentElement.lang=chosen;const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);for(const node of nodes){if(node.parentElement?.closest('script,style,option'))continue;let base=original.get(node);if(base===undefined){base=node.textContent;original.set(node,base)}const trimmed=base.trim();if(!trimmed)continue;const translated=dictionary[trimmed]?.[chosen]||trimmed;if(trimmed!==translated)node.textContent=base.replace(trimmed,translated);else if(node.textContent!==base)node.textContent=base}}finally{busy=false}}
 select.addEventListener('change',()=>{chosen=select.value;try{localStorage.setItem(storageKey,chosen)}catch(e){}translate()});
-const observer=new MutationObserver(()=>translate());observer.observe(document.getElementById('esportes'),{childList:true,subtree:true});observer.observe(document.getElementById('event-list'),{childList:true,subtree:true});translate();
+const observer=new MutationObserver(()=>translate());for(const id of ['esportes','event-list','eventrows']){const el=document.getElementById(id);if(el)observer.observe(el,{childList:true,subtree:true})}translate();
 })();
