@@ -47,3 +47,27 @@ def test_provider_status_never_claims_live_connection():
     assert all(p["connected"] is False for p in data["providers"])
     assert all(p["latency_ms"] is None for p in data["providers"])
     assert all(p["referrals_enabled"] is False for p in data["providers"])
+
+
+def test_multilingual_bundle_is_served():
+    response = client.get("/static/i18n.js")
+    assert response.status_code == 200
+    assert "localStorage" in response.text
+    assert "pt-BR" in response.text
+    assert "translations" in response.text
+
+
+def test_multilingual_selector_in_html():
+    html = client.get("/").text
+    assert 'id="language"' in html
+    assert '/static/i18n.js' in html
+    assert 'value="en"' in html
+    assert 'value="es"' in html
+
+
+def test_no_unverified_live_market_claims():
+    response = client.get("/api/providers/status")
+    assert response.status_code == 200
+    data = response.json()
+    assert all(not p["connected"] for p in data["providers"])
+    assert all(p["data_freshness"] == "unavailable" for p in data["providers"])
